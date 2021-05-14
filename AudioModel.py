@@ -50,16 +50,6 @@ if __name__ == "__main__":
     # Reshaping the data so that it fits to the CNN
     new_X = [X.iloc[i].tolist() for i in range(len(X))]
     new_y = [y.iloc[i].tolist() for i in range(len(y))]
-    #print(new_X.shape)
-    #print(new_y.shape)
-
-    #print(X)
-    #print(X.iloc[0].tolist()[0][0])
-    print(len(new_X))
-    print(len(new_X[0]))
-    print(len(new_X[0][0]))
-    print(len(new_X[0][0][0]))
-    #exit()
 
     # 80% train, %20 test data split
     X_train, X_test, y_train, y_test = train_test_split(new_X, new_y, test_size=0.2)
@@ -99,7 +89,7 @@ if __name__ == "__main__":
     from tensorflow.keras.optimizers import RMSprop
 
     opt = Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-07, amsgrad=False,
-               name='Adam')  # Default learning rate is 0.001
+               name='Adam')  # Old optimizer
     optNew = RMSprop(learning_rate=0.001)
 
     model.compile(optimizer=optNew,
@@ -119,14 +109,8 @@ if __name__ == "__main__":
 
     predictions = np.argmax(model.predict(X_test), axis=-1)
 
-    #X = standardScaler.fit_transform(X)
-    #predictionsAll = np.argmax(model.predict(X), axis=-1)
-
     print(classification_report(y_test, predictions))
     print(confusion_matrix(y_test, predictions))
-
-    #print(classification_report(y, predictionsAll))
-    #print(confusion_matrix(y, predictionsAll))
 
     model.summary()
 
