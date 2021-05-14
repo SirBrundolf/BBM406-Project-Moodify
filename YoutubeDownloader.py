@@ -35,4 +35,4 @@ for i in files:
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([link])
         count += 1
-    print("YEP")
+        print(count)
