@@ -1,8 +1,6 @@
 # BBM406-Project-Moodify
 Course project for BBM406 - Moodify.
 
-Work in progress!
-
 ## Installation
 Download Multi-modal MIREX-like emotion dataset (2013) from http://mir.dei.uc.pt/downloads.html
 
