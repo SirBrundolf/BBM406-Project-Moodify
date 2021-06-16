@@ -20,6 +20,8 @@ if __name__ == "__main__":
 
     dataset = dataset.drop('Class', axis=1)
 
+    print("Read the data from JSON files, created the dataframe")
+
     # Finding the max. frame length
     max_frame_length = 0
     for i in dataset["Mel Spectrogram"]:
@@ -34,26 +36,35 @@ if __name__ == "__main__":
             for x in range(diff):
                 dataset["Mel Spectrogram"].iloc[i][j].append(0.0)
 
+    print("Preprocessed the data")
+
     # To process the "Cluster" data, we need to convert its text data to numeric data
     from sklearn.preprocessing import LabelEncoder
 
-    genresDF = dataset.iloc[:, 0]
+    clusters_data = dataset.iloc[:, 1]
     encoder = LabelEncoder()
-    genresEncoded = encoder.fit_transform(genresDF)
-    dataset['Cluster'] = genresEncoded
+    clusters_encoded = encoder.fit_transform(clusters_data)
+    dataset['Cluster'] = clusters_encoded
 
     from sklearn.model_selection import train_test_split
 
-    X = dataset.drop('Cluster', axis=1)
+    X = dataset.drop(['Cluster', 'Name'], axis=1)
     y = dataset['Cluster']
 
     # Reshaping the data so that it fits to the CNN
-    new_X = [X.iloc[i].tolist() for i in range(len(X))]
+    new_X = [X.iloc[i][0] for i in range(len(X))]
     new_y = [y.iloc[i].tolist() for i in range(len(y))]
 
-    # 80% train, %20 test data split
-    X_train, X_test, y_train, y_test = train_test_split(new_X, new_y, test_size=0.2)
+    # Reshaping the input size as (input_size, n_mels, max_frame_length, 1) so that it's like an image
+    for i in range(len(new_X)):
+        for j in range(len(new_X[i])):
+            new_X[i][j] = [[new_X[i][j][k]] for k in range(len(new_X[i][j]))]  # Channel size becomes 1
+
+    # 90% train, %10 test data split
+    X_train, X_test, y_train, y_test = train_test_split(new_X, new_y, test_size=0.1)
     #X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5)
+
+    print("Splitted the data into train and test sets")
 
     from tensorflow.keras.models import Sequential
     from tensorflow.keras.layers import Conv2D, MaxPooling2D, BatchNormalization, Dense, Flatten, Dropout
@@ -63,15 +74,19 @@ if __name__ == "__main__":
         Conv2D(32, (3, 3), input_shape=(len(new_X[0]), len(new_X[0][0]), len(new_X[0][0][0])), activation="relu", padding="same"),
         BatchNormalization(),
         MaxPooling2D(pool_size=(2, 4), strides=(2, 4), padding="same"),
+        Dropout(0.03375),
         Conv2D(128, (3, 3), activation="relu", padding="same"),
         BatchNormalization(),
         MaxPooling2D(pool_size=(2, 4), strides=(2, 4), padding="same"),
+        Dropout(0.0675),
         Conv2D(128, (3, 3), activation="relu", padding="same"),
         BatchNormalization(),
         MaxPooling2D(pool_size=(2, 4), strides=(2, 4), padding="same"),
+        Dropout(0.125),
         Conv2D(192, (3, 3), activation="relu", padding="same"),
         BatchNormalization(),
         MaxPooling2D(pool_size=(3, 5), strides=(3, 5), padding="same"),
+        Dropout(0.25),
         Conv2D(256, (3, 3), activation="relu", padding="same"),
         BatchNormalization(),
         MaxPooling2D(pool_size=(4, 4), strides=(4, 4), padding="same"),
@@ -88,9 +103,9 @@ if __name__ == "__main__":
     from tensorflow.keras.optimizers import Adam
     from tensorflow.keras.optimizers import RMSprop
 
-    opt = Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-07, amsgrad=False,
+    opt = Adam(learning_rate=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-07, amsgrad=False,
                name='Adam')  # Old optimizer
-    optNew = RMSprop(learning_rate=0.001)
+    optNew = RMSprop(learning_rate=0.0001)
 
     model.compile(optimizer=optNew,
                   loss='sparse_categorical_crossentropy',

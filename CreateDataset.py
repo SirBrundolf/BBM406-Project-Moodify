@@ -17,18 +17,20 @@ HOP_LENGTH = 256  # Used for overlapping frames
 SAMPLE_RATE = 22050
 
 def read_samples(path):
-    dataset = {"Cluster": [],
-               "Class": [],
-               "Mel Spectrogram": []}
+    dataset = {"Name": [],
+                "Cluster": [],
+                "Class": [],
+                "Mel Spectrogram": []}
 
     for dirpath, dirnames, filenames in os.walk(path):
-        if dirpath is not path:   #Ignoring the first path, as it's the genres folder itself with its subfolders
+        if dirpath is not path:   # Ignoring the first path, as it's the genres folder itself with its subfolders
             for i in filenames:
                 path = dirpath + '\\' + i
                 audio, sr = librosa.load(path, sr=SAMPLE_RATE)
 
                 mel_spectrogram = librosa.feature.melspectrogram(audio, sr=sr, n_fft=FRAME_SIZE, hop_length=HOP_LENGTH, n_mels=96)
 
+                dataset["Name"].append(path.split("\\")[-1].split(".")[0])
                 dataset["Cluster"].append(classes[dirpath.split("\\")[-1]])
                 dataset["Class"].append(dirpath.split("\\")[-1])
                 dataset["Mel Spectrogram"].append(mel_spectrogram.tolist())
