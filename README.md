@@ -1,7 +1,7 @@
 # BBM406-Project-Moodify
 Me an my team's course project for BBM406 - Moodify.
 
-A music mood classifier which has 3 different models utilizing audio data with CNNs, lyrical data with machine learning methods and both with a hybrid model using early fusion.
+A music mood classifier which has 3 different models (utilizing audio data with CNNs, lyrical data with machine learning methods and both with a hybrid model using early fusion).
 
 ## Installation
 Download Multi-modal MIREX-like emotion dataset (2013) from http://mir.dei.uc.pt/downloads.html
