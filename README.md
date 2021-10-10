@@ -13,3 +13,8 @@ Make sure that the files are splitted as: Audio/Cluster (Count)/(Class Name) and
 After the splitting is done, run CreateDataset.py to extract the audio dataset as .json files.
 
 To run a model, run their respective .py files (AudioModel.py for audio, LyricsModels.py for lyrics, HybridModel.py for hybrid).
+
+## Team Members
+* Emir Kaan Kırmacı
+* Tuna Karacan
+* Cihad Özcan
